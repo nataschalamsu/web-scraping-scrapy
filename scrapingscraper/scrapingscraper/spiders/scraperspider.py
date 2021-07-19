@@ -1,4 +1,5 @@
 import scrapy
+from scrapy.loader import ItemLoader
 from scrapingscraper.items import ScrapingscraperItem
 
 
@@ -7,16 +8,13 @@ class ScraperspiderSpider(scrapy.Spider):
     start_urls = ['https://walltswallet.com/collections/bifold-wallet?sort_by=best-selling']
 
     def parse(self, response):
-        name = response.xpath('//h2[@class="productitem--title"]/a/text()').extract()
-        price = response.xpath('//div[@class="price--main"]/span/text()').extract()
+        for products in response.xpath('//div[@class="productitem--info"]'):
+            l = ItemLoader(item = ScrapingscraperItem(), selector=products)
 
-        for product in zip(name, price):
-            scraped_data = {
-                'Name': product[0].strip(),
-                'Price': product[1].strip(),
-            }
+            l.add_css('name', 'h2.productitem--title > a:nth-child(n+1)::text')
+            l.add_css('price', 'span.money::text')
 
-            yield scraped_data
+            yield l.load_item()
 
         next_page = response.xpath('//li[@class="pagination__next"]/a/@href').extract()[0]
         if next_page is not None:
