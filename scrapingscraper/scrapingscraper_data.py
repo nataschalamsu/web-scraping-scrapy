@@ -23,11 +23,18 @@ sorted_by_price = df.sort_values(by=['price'])
 print(sorted_by_price)
 
 
-# In[28]:
+# In[31]:
 
 
-filtered = df['name'].str.find('Navy')
-print(filtered)
+filtered_by_price = df[df.price.eq(259.9)]
+print(filtered_by_price)
+
+
+# In[40]:
+
+
+filter_by_name = df[df['name'].str.contains('Aster')]
+print(filter_by_name)
 
 
 # In[ ]:
