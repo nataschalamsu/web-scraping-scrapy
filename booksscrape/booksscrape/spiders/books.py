@@ -18,3 +18,8 @@ class BooksSpider(scrapy.Spider):
             item.add_css('availability', 'p.instock.availability')
 
             yield item.load_item()
+
+        next_page = response.css('li.next a').attrib['href']
+        print(next_page)
+        if next_page is not None:
+            yield response.follow(next_page, callback=self.parse)
